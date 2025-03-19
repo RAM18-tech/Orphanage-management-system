@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins&amp;display=swap'>
+  <!-- Include any necessary CSS stylesheets -->
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20230527/pngtree-group-of-children-smiling-while-posing-outside-of-a-house-image_2691273.jpg");
+    background-size: cover;
+    background-position: center;
+    background-color: #f1f1f1;
+  }
+
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+  }
+
+  .form-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .input_box {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .input_box input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+    font-size: 16px;
+  }
+
+  .input_box label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    color: #999;
+    pointer-events: none;
+    transition: 0.3s ease-out;
+  }
+
+  .input_box input:focus + label,
+  .input_box input:valid + label {
+    top: -10px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  .input_box .bx {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    color: #999;
+  }
+
+  .form-container .input-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
+  }
+
+  .form-container .input-submit:hover {
+    background-color: #45a049;
+  }
+
+  .form-container .register-link a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease-out;
+  }
+
+  .form-container .register-link a:hover {
+    color: #4CAF50;
+  }
+</style>
+</head>
+
+<body>
+  
+
+<div class="wrapper">
+  <div class="form-container register_box">
+    <h2>Register</h2>
+    <form id="registerForm" class="form-container register_box" method="POST">
+      <div class="input_box">
+        <input type="text" id="new_user" class="input-field" required>
+        <label for="new_user">Username</label>
+        <i class="bx bx-user"></i>
+      </div>
+      <div class="input_box">
+        <input type="password" id="new_pass" class="input-field" required>
+        <label for="new_pass">Password</label>
+        <i class="bx bx-lock-alt"></i>
+      </div>
+      <div class="input_box">
+        <input type="password" id="confirm_pass" class="input-field" required>
+        <label for="confirm_pass">Confirm Password</label>
+        <i class="bx bx-lock-alt"></i>
+      </div>
+      <input type="submit" class="input-submit" value="Register">
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Fetch form input values
+    var newUser = document.getElementById("new_user").value;
+    var newPassword = document.getElementById("new_pass").value;
+    var confirmPassword = document.getElementById("confirm_pass").value;
+
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    // Prepare data to send to the backend
+    var formData = {
+      username: newUser,
+      password: newPassword
+    };
+
+    // Send POST request to backend to check if the username already exists
+    fetch("http://localhost:8100/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: newUser })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        alert("Username already exists. Please choose a different username.");
+      } else {
+        // If username is unique, proceed with registration
+        fetch("http://localhost:8100/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.Status === "successful") {
+            window.location.href = "login.html"; // Redirect to login page if registration is successful
+          } else {
+            alert(data.error); // Display error message if registration fails
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Registration failed. Please try again later."); // Display generic error message
+        });
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert("An error occurred while processing your request. Please try again later."); // Display generic error message
+    });
+  });
+</script>
+</body>
+</html>

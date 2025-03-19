@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsored Children</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Sponsored Children's List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Sponsored</th>
+            </tr>
+        </thead>
+        <tbody id="sponsored-children-list">
+            <!-- Sponsored children details will be displayed here -->
+        </tbody>
+    </table>
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include your script -->
+    <script>
+        $(document).ready(function() {
+            $.get("http://localhost:8100/sponsored-children", function(data, status) {
+                if (status === "success") {
+                    displaySponsoredChildren(data);
+                } else {
+                    $("#sponsored-children-list").html("<tr><td colspan='3'>Failed to fetch data.</td></tr>");
+                }
+            });
+
+            function displaySponsoredChildren(children) {
+                var childrenHtml = "";
+                children.forEach(function(child) {
+                    childrenHtml += "<tr>";
+                    childrenHtml += "<td>" + child.name + "</td>";
+                    childrenHtml += "<td>" + child.age + "</td>";
+                    childrenHtml += "<td>" + (child.sponsored ? "Yes" : "No") + "</td>";
+                    childrenHtml += "</tr>";
+                });
+                $("#sponsored-children-list").html(childrenHtml);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet">
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .ui.container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .ui.form .field {
+            margin-bottom: 20px;
+        }
+        
+        .ui.form label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .ui.form input[type="text"],
+        .ui.form input[type="email"],
+        .ui.form input[type="tel"],
+        .ui.form textarea {
+            width: calc(100% - 22px); /* Adjust for border width */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            color: #333;
+        }
+        
+        .ui.form input[type="text"]:focus,
+        .ui.form input[type="email"]:focus,
+        .ui.form input[type="tel"]:focus,
+        .ui.form textarea:focus {
+            border-color: #007bff; /* Highlight border color on focus */
+        }
+        
+        .ui.form textarea {
+            height: 100px;
+        }
+        
+        .ui.form button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .ui.primary.button {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        .ui.primary.button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+        
+        .ui.button {
+            background-color: #e5e5e5;
+            color: #333;
+        }
+        
+        .ui.button:hover {
+            background-color: #d1d1d1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ui container">
+        <h1 style="text-align: center;">Feedback</h1>
+        
+        <form id="feedbackForm" class="ui form">
+            <div class="field">
+                <label>Name</label>
+                <input type="text" id="full_name" placeholder="Full Name" required>
+            </div>
+            <div class="field">
+                <label>Address</label>
+                <input type="text" id="full_address" placeholder="Address" required>
+            </div>
+            <div class="field">
+                <label>Phone No.</label>
+                <input type="tel" id="phone" placeholder="Phone / Mobile" required>
+            </div>
+            <div class="field">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="Email ID" required>
+            </div>
+            <div class="field">
+                <label>Comments</label>
+                <textarea id="comment" rows="2" required></textarea>
+            </div>
+            <button id="submitBtn" class="ui primary button" type="submit">Submit</button>
+            <button class="ui button" type="reset">Reset</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            // Collect form data
+            const formData = new FormData(event.target);
+            const feedbackData = Object.fromEntries(formData.entries());
+
+            // Send feedback data to the server
+            fetch('http://localhost:8100/submit_feedback', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(feedbackData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                alert(data.message); // Show success message
+                // Clear form fields if needed
+                event.target.reset();
+            })
+            .catch(error => {
+                console.error("Error submitting feedback:", error);
+                alert("An error occurred while submitting feedback. Please try again later.");
+            });
+        });
+    </script>
+</body>
+</html>

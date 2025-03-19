@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Sponsored Children</title>
+    <!-- Link to your stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        /* Define your table styles here */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Style for the donate button */
+        .donate-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        // Function to redirect to donation page
+        function redirectToDonationPage() {
+            // Redirect to donation application page
+            window.location.href = "http://localhost:3000/donationapplication.html";
+        }
+
+        $(document).ready(function() {
+            // Make AJAX request to fetch non-sponsored children
+            $.get("http://localhost:8100/notsponsored", function(data, status) {
+                if (status === "success") {
+                    displayNonSponsoredChildren(data);
+                } else {
+                    $("#non-sponsored-children-list").html("Failed to fetch data.");
+                }
+            });
+
+            // Display non-sponsored children's details in a table
+            function displayNonSponsoredChildren(children) {
+                var childrenHtml = "<table>";
+                childrenHtml += "<tr><th>Name</th><th>Age</th><th>Sponsored</th><th>Donate</th></tr>";
+                children.forEach(function(child) {
+                    childrenHtml += "<tr>";
+                    childrenHtml += "<td>" + child.name + "</td>";
+                    childrenHtml += "<td>" + child.age + "</td>";
+                    childrenHtml += "<td>" + (child.sponsored ? "Yes" : "No") + "</td>";
+                    childrenHtml += "<td><button class='donate-button' onclick='redirectToDonationPage()'>Donate</button></td>";
+                    childrenHtml += "</tr>";
+                });
+                childrenHtml += "</table>";
+                $("#non-sponsored-children-list").html(childrenHtml);
+            }
+        });
+    </script>
+</head>
+<body>
+    <h2>Non-Sponsored Children's List</h2><br><br>
+
+    <div id="non-sponsored-children-list">
+        <!-- Non-sponsored children details will be displayed here -->
+    </div>
+</body>
+</html>
